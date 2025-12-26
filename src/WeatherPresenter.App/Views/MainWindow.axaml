@@ -1,0 +1,67 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:WeatherPresenter.App.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:WeatherPresenter.App.Views"
+        xmlns:viewModels="clr-namespace:WeatherPresenter.App.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="WeatherPresenter.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Weather Presenter - Olievortex"
+        PointerWheelChanged="Window_OnPointerWheelChanged"
+        PointerMoved="Window_OnPointerMoved">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <Button Command="{Binding CommandResetZoom}" HotKey="Shift+I" IsVisible="False" />
+        <Button Command="{Binding CommandClearCanvas}" HotKey="Shift+X" IsVisible="False" />
+        <Button Command="{Binding CommandOpenImages}" HotKey="Ctrl+O" IsVisible="False" />
+
+        <Canvas Name="CvsImage" RenderTransform="{Binding ImageTransform}">
+            <Image Name="ImgCurrent" Stretch="None"
+                   Source="{Binding CurrentImage}"
+                   Width="{Binding ImageWidth}"
+                   Height="{Binding ImageHeight}" />
+            <ItemsControl Name="IcOverlay" ItemsSource="{Binding CanvasItems}"
+                          Width="{Binding ImageWidth}"
+                          Height="{Binding ImageHeight}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Line StartPoint="{Binding StartPoint}" EndPoint="{Binding EndPoint}"
+                              Stroke="{Binding Stroke}"
+                              StrokeThickness="{Binding StrokeThickness}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Canvas>
+        <ItemsControl ItemsSource="{Binding ProductButtons}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Name}"
+                            CommandParameter="{Binding Id}"
+                            Command="{Binding $parent[views:MainWindow].((viewModels:MainWindowViewModel)DataContext).CommandProduct}"
+                            Theme="{StaticResource OlieButton}"
+                            Background="{Binding Background}"
+                            Margin="5" Padding="5" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>
